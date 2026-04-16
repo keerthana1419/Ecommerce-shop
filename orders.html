@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Order History - ShopZone</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="profile.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo" onclick="window.location.href='index.html'" style="cursor:pointer">🛒 ShopZone</div>
+    <div class="nav-links">
+      <a href="index.html"><i class="fas fa-arrow-left"></i> Back to Shop</a>
+      <a href="profile.html"><i class="fas fa-user"></i> My Account</a>
+    </div>
+  </nav>
+
+  <div class="profile-wrapper">
+    <!-- SIDEBAR -->
+    <aside class="profile-sidebar">
+      <div class="sidebar-avatar" id="sidebarAvatar"></div>
+      <div class="sidebar-name"  id="sidebarName"></div>
+      <div class="sidebar-email" id="sidebarEmail"></div>
+      <nav class="sidebar-nav">
+        <a href="profile.html"><i class="fas fa-user"></i> My Account</a>
+        <a href="orders.html" class="active"><i class="fas fa-box"></i> Order History</a>
+        <a href="index.html" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="profile-main">
+      <div class="profile-card">
+        <h2><i class="fas fa-box"></i> Order History</h2>
+        <div id="ordersContainer"></div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    window.onload = () => {
+      const name  = localStorage.getItem('userName');
+      const email = localStorage.getItem('userEmail');
+      if (!name) { window.location.href = 'index.html'; return; }
+
+      document.getElementById('sidebarAvatar').textContent = name.charAt(0).toUpperCase();
+      document.getElementById('sidebarName').textContent   = name;
+      document.getElementById('sidebarEmail').textContent  = email || '';
+
+      renderOrders();
+    };
+
+    function renderOrders() {
+      const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+      const container = document.getElementById('ordersContainer');
+
+      if (!orders.length) {
+        container.innerHTML = `
+          <div class="empty-orders">
+            <i class="fas fa-box-open"></i>
+            <p>You haven't placed any orders yet.</p>
+            <a href="index.html" class="btn-primary">Start Shopping</a>
+          </div>`;
+        return;
+      }
+
+      container.innerHTML = orders.map(order => `
+        <div class="order-card">
+          <div class="order-card-header">
+            <div>
+              <span class="order-id-label">Order ID</span>
+              <strong>${order.id}</strong>
+            </div>
+            <div>
+              <span class="order-id-label">Date</span>
+              <strong>${order.date}</strong>
+            </div>
+            <div>
+              <span class="order-id-label">Total</span>
+              <strong class="order-total">$${order.total}</strong>
+            </div>
+            <span class="order-status ${order.status.toLowerCase()}">${order.status}</span>
+          </div>
+          <div class="order-items-list">
+            ${order.items.map(item => `
+              <div class="order-item-row">
+                <img src="${item.image}" alt="${item.name}" onerror="this.src='https://via.placeholder.com/50'"/>
+                <div class="order-item-info">
+                  <span>${item.name}</span>
+                  <span class="order-item-cat">${item.category}</span>
+                </div>
+                <span class="order-item-qty">x${item.qty}</span>
+                <span class="order-item-price">$${(item.price * item.qty).toFixed(2)}</span>
+              </div>`).join('')}
+          </div>
+          <div class="order-card-footer">
+            <div class="order-meta">
+              <span><i class="fas fa-map-marker-alt"></i> ${order.address}</span>
+              <span><i class="fas fa-credit-card"></i> ${order.payMethod}</span>
+            </div>
+            <div class="order-breakdown">
+              <span>Subtotal: $${order.subtotal}</span>
+              <span>Shipping: ${parseFloat(order.shipping) === 0 ? 'FREE' : '$' + order.shipping}</span>
+              <span>Tax: $${order.tax}</span>
+            </div>
+          </div>
+        </div>`).join('');
+    }
+
+    function logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('userName');
+      localStorage.removeItem('userEmail');
+      window.location.href = 'index.html';
+    }
+  </script>
+</body>
+</html>

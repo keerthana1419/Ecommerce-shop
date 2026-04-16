@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Checkout - ShopZone</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="checkout.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="logo" onclick="window.location.href='index.html'" style="cursor:pointer">🛒 ShopZone</div>
+    <div class="nav-links">
+      <a href="index.html"><i class="fas fa-arrow-left"></i> Back to Shop</a>
+    </div>
+  </nav>
+
+  <!-- CHECKOUT WRAPPER -->
+  <div class="checkout-wrapper">
+
+    <!-- LEFT: FORMS -->
+    <div class="checkout-left">
+
+      <!-- PROGRESS STEPS -->
+      <div class="steps">
+        <div class="step active" id="step1Ind"><span>1</span> Shipping</div>
+        <div class="step-line"></div>
+        <div class="step" id="step2Ind"><span>2</span> Payment</div>
+        <div class="step-line"></div>
+        <div class="step" id="step3Ind"><span>3</span> Confirm</div>
+      </div>
+
+      <!-- STEP 1: SHIPPING -->
+      <div class="form-section" id="step1">
+        <h2><i class="fas fa-truck"></i> Shipping Details</h2>
+        <div class="form-row">
+          <div class="form-group">
+            <label>First Name</label>
+            <input type="text" id="firstName" placeholder="John"/>
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" id="lastName" placeholder="Doe"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="shipEmail" placeholder="john@example.com"/>
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" id="phone" placeholder="+1 234 567 8900"/>
+        </div>
+        <div class="form-group">
+          <label>Street Address</label>
+          <input type="text" id="address" placeholder="123 Main Street, Apt 4B"/>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>City</label>
+            <input type="text" id="city" placeholder="New York"/>
+          </div>
+          <div class="form-group">
+            <label>ZIP Code</label>
+            <input type="text" id="zip" placeholder="10001"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Country</label>
+          <select id="country">
+            <option value="">Select Country</option>
+            <option>United States</option>
+            <option>United Kingdom</option>
+            <option>Canada</option>
+            <option>Australia</option>
+            <option>India</option>
+            <option>Germany</option>
+            <option>France</option>
+          </select>
+        </div>
+        <div class="shipping-options">
+          <h3>Shipping Method</h3>
+          <label class="ship-option">
+            <input type="radio" name="shipping" value="0" checked/>
+            <div class="ship-option-info">
+              <span>Standard Shipping</span>
+              <span class="ship-days">5-7 business days</span>
+            </div>
+            <span class="ship-price">FREE</span>
+          </label>
+          <label class="ship-option">
+            <input type="radio" name="shipping" value="9.99"/>
+            <div class="ship-option-info">
+              <span>Express Shipping</span>
+              <span class="ship-days">2-3 business days</span>
+            </div>
+            <span class="ship-price">$9.99</span>
+          </label>
+          <label class="ship-option">
+            <input type="radio" name="shipping" value="19.99"/>
+            <div class="ship-option-info">
+              <span>Overnight Shipping</span>
+              <span class="ship-days">Next business day</span>
+            </div>
+            <span class="ship-price">$19.99</span>
+          </label>
+        </div>
+        <button class="btn-primary btn-full" onclick="goToStep(2)">Continue to Payment <i class="fas fa-arrow-right"></i></button>
+      </div>
+
+      <!-- STEP 2: PAYMENT -->
+      <div class="form-section hidden" id="step2">
+        <h2><i class="fas fa-credit-card"></i> Payment Details</h2>
+        <div class="payment-tabs">
+          <button class="pay-tab active" onclick="setPayTab(this,'card')"><i class="fas fa-credit-card"></i> Card</button>
+          <button class="pay-tab" onclick="setPayTab(this,'paypal')"><i class="fab fa-paypal"></i> PayPal</button>
+          <button class="pay-tab" onclick="setPayTab(this,'cod')"><i class="fas fa-money-bill"></i> Cash on Delivery</button>
+        </div>
+
+        <div id="cardForm">
+          <div class="form-group">
+            <label>Cardholder Name</label>
+            <input type="text" id="cardName" placeholder="John Doe"/>
+          </div>
+          <div class="form-group card-number-wrap">
+            <label>Card Number</label>
+            <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCard(this)"/>
+            <i class="fas fa-lock card-lock"></i>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Expiry Date</label>
+              <input type="text" id="expiry" placeholder="MM/YY" maxlength="5" oninput="formatExpiry(this)"/>
+            </div>
+            <div class="form-group">
+              <label>CVV</label>
+              <input type="password" id="cvv" placeholder="***" maxlength="3"/>
+            </div>
+          </div>
+          <div class="secure-badge"><i class="fas fa-shield-alt"></i> Your payment is 256-bit SSL encrypted</div>
+        </div>
+
+        <div id="paypalForm" class="hidden">
+          <div class="paypal-info">
+            <i class="fab fa-paypal"></i>
+            <p>You will be redirected to PayPal to complete your payment securely.</p>
+          </div>
+        </div>
+
+        <div id="codForm" class="hidden">
+          <div class="cod-info">
+            <i class="fas fa-hand-holding-usd"></i>
+            <p>Pay with cash when your order is delivered. No extra charges.</p>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn-outline" onclick="goToStep(1)"><i class="fas fa-arrow-left"></i> Back</button>
+          <button class="btn-primary" onclick="goToStep(3)">Review Order <i class="fas fa-arrow-right"></i></button>
+        </div>
+      </div>
+
+      <!-- STEP 3: CONFIRM -->
+      <div class="form-section hidden" id="step3">
+        <h2><i class="fas fa-check-circle"></i> Review & Confirm</h2>
+        <div id="confirmDetails"></div>
+        <div class="btn-row">
+          <button class="btn-outline" onclick="goToStep(2)"><i class="fas fa-arrow-left"></i> Back</button>
+          <button class="btn-primary btn-place" onclick="placeOrder()"><i class="fas fa-shopping-bag"></i> Place Order</button>
+        </div>
+      </div>
+
+      <!-- STEP 4: SUCCESS -->
+      <div class="form-section hidden" id="step4">
+        <div class="success-box">
+          <div class="success-icon"><i class="fas fa-check"></i></div>
+          <h2>Order Placed!</h2>
+          <p>Thank you for your purchase. Your order has been confirmed.</p>
+          <p class="order-id">Order ID: <strong id="orderId"></strong></p>
+          <button class="btn-primary" onclick="window.location.href='index.html'">Continue Shopping</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT: ORDER SUMMARY -->
+    <div class="checkout-right">
+      <div class="order-summary">
+        <h2>Order Summary</h2>
+        <div class="summary-items" id="summaryItems"></div>
+        <div class="summary-totals">
+          <div class="summary-row"><span>Subtotal</span><span id="summarySubtotal">$0.00</span></div>
+          <div class="summary-row"><span>Shipping</span><span id="summaryShipping">FREE</span></div>
+          <div class="summary-row"><span>Tax (8%)</span><span id="summaryTax">$0.00</span></div>
+          <div class="summary-row total-row"><span>Total</span><span id="summaryTotal">$0.00</span></div>
+        </div>
+        <div class="promo-wrap">
+          <input type="text" id="promoInput" placeholder="Promo code"/>
+          <button onclick="applyPromo()">Apply</button>
+        </div>
+        <p id="promoMsg" class="promo-msg"></p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <script src="checkout.js"></script>
+</body>
+</html>

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Account - ShopZone</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="profile.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo" onclick="window.location.href='index.html'" style="cursor:pointer">🛒 ShopZone</div>
+    <div class="nav-links">
+      <a href="index.html"><i class="fas fa-arrow-left"></i> Back to Shop</a>
+      <a href="orders.html"><i class="fas fa-box"></i> Orders</a>
+    </div>
+  </nav>
+
+  <div class="profile-wrapper">
+    <!-- SIDEBAR -->
+    <aside class="profile-sidebar">
+      <div class="sidebar-avatar" id="sidebarAvatar"></div>
+      <div class="sidebar-name"  id="sidebarName"></div>
+      <div class="sidebar-email" id="sidebarEmail"></div>
+      <nav class="sidebar-nav">
+        <a href="profile.html" class="active"><i class="fas fa-user"></i> My Account</a>
+        <a href="orders.html"><i class="fas fa-box"></i> Order History</a>
+        <a href="index.html" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="profile-main">
+
+      <!-- PROFILE INFO CARD -->
+      <div class="profile-card">
+        <div class="card-header-row">
+          <h2><i class="fas fa-user"></i> Personal Information</h2>
+          <button class="btn-primary btn-sm" id="editToggleBtn" onclick="toggleEditForm()">
+            <i class="fas fa-edit"></i> Edit Profile
+          </button>
+        </div>
+
+        <!-- VIEW MODE -->
+        <div id="profileView">
+          <div class="info-grid">
+            <div class="info-item"><label>Full Name</label><p id="infoName"></p></div>
+            <div class="info-item"><label>Phone Number</label><p id="infoPhone"></p></div>
+            <div class="info-item"><label>Date of Birth</label><p id="infoDob"></p></div>
+            <div class="info-item"><label>Gender</label><p id="infoGender"></p></div>
+            <div class="info-item"><label>Member Since</label><p id="infoJoined"></p></div>
+            <div class="info-item"><label>Total Orders</label><p id="infoOrders"></p></div>
+          </div>
+        </div>
+
+        <!-- EDIT FORM -->
+        <div class="edit-profile-form hidden" id="editForm">
+
+          <!-- AVATAR -->
+          <div class="profile-avatar-edit">
+            <div class="avatar-preview" id="editAvatar"></div>
+            <div class="avatar-edit-info">
+              <strong id="editAvatarName"></strong>
+              <p>Your avatar is auto-generated from your name initial.</p>
+            </div>
+          </div>
+
+          <!-- PERSONAL DETAILS -->
+          <div class="edit-section-title">Personal Details</div>
+          <div class="form-row-2">
+            <div class="form-grp">
+              <label>Full Name</label>
+              <input type="text" id="editName" placeholder="Priya Sharma"/>
+            </div>
+            <div class="form-grp">
+              <label>Phone Number</label>
+              <input type="tel" id="editPhone" placeholder="+91 98765 43210"/>
+            </div>
+          </div>
+          <div class="form-row-2">
+            <div class="form-grp">
+              <label>Date of Birth</label>
+              <input type="date" id="editDob"/>
+            </div>
+            <div class="form-grp">
+              <label>Gender</label>
+              <select id="editGender">
+                <option value="">Select</option>
+                <option value="Female">Female</option>
+                <option value="Male">Male</option>
+                <option value="Other">Other</option>
+                <option value="Prefer not to say">Prefer not to say</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- CHANGE PASSWORD -->
+          <div class="edit-section-title">Change Password <span style="font-weight:400;text-transform:none;letter-spacing:0">(leave blank to keep current)</span></div>
+          <div class="form-row-2">
+            <div class="form-grp">
+              <label>New Password</label>
+              <div class="pwd-wrap">
+                <input type="password" id="editNewPwd" placeholder="New password"/>
+                <button type="button" class="pwd-eye" onclick="togglePwd('editNewPwd',this)"><i class="fas fa-eye"></i></button>
+              </div>
+            </div>
+            <div class="form-grp">
+              <label>Confirm Password</label>
+              <div class="pwd-wrap">
+                <input type="password" id="editConfirmPwd" placeholder="Confirm password"/>
+                <button type="button" class="pwd-eye" onclick="togglePwd('editConfirmPwd',this)"><i class="fas fa-eye"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <p id="editMsg" class="addr-msg"></p>
+          <div class="form-actions">
+            <button class="btn-primary" onclick="saveProfile()"><i class="fas fa-save"></i> Save Changes</button>
+            <button class="btn-outline" onclick="toggleEditForm()">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SAVED ADDRESSES CARD -->
+      <div class="profile-card">
+        <div class="card-header-row">
+          <h2><i class="fas fa-map-marker-alt"></i> Saved Addresses</h2>
+          <button class="btn-primary btn-sm" onclick="showAddressForm()">
+            <i class="fas fa-plus"></i> Add Address
+          </button>
+        </div>
+
+        <div class="address-form hidden" id="addressForm">
+          <h3 id="addressFormTitle">Add New Address</h3>
+          <div class="form-row-2">
+            <div class="form-grp"><label>Label (e.g. Home, Work)</label><input type="text" id="addrLabel" placeholder="Home"/></div>
+            <div class="form-grp"><label>Full Name</label><input type="text" id="addrName" placeholder="Priya Sharma"/></div>
+          </div>
+          <div class="form-grp"><label>Street Address</label><input type="text" id="addrStreet" placeholder="123 Main Street, Apt 4B"/></div>
+          <div class="form-row-3">
+            <div class="form-grp"><label>City</label><input type="text" id="addrCity" placeholder="Chennai"/></div>
+            <div class="form-grp"><label>ZIP Code</label><input type="text" id="addrZip" placeholder="600001"/></div>
+            <div class="form-grp"><label>Country</label><input type="text" id="addrCountry" placeholder="India"/></div>
+          </div>
+          <div class="form-grp"><label>Phone</label><input type="tel" id="addrPhone" placeholder="+91 98765 43210"/></div>
+          <div class="form-actions">
+            <button class="btn-primary" onclick="saveAddress()">Save Address</button>
+            <button class="btn-outline" onclick="hideAddressForm()">Cancel</button>
+          </div>
+          <p id="addrMsg" class="addr-msg"></p>
+        </div>
+
+        <div id="addressList"></div>
+      </div>
+
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    let editingIndex = -1;
+
+    window.onload = () => {
+      const name = localStorage.getItem('userName');
+      if (!name) { window.location.href = 'index.html'; return; }
+      loadProfile();
+      renderAddresses();
+    };
+
+    function loadProfile() {
+      const name    = localStorage.getItem('userName')    || '';
+      const email   = localStorage.getItem('userEmail')   || '';
+      const phone   = localStorage.getItem('userPhone')   || 'Not provided';
+      const dob     = localStorage.getItem('userDob')     || 'Not provided';
+      const gender  = localStorage.getItem('userGender')  || 'Not provided';
+      const joined  = localStorage.getItem('joinedDate')  || new Date().toLocaleDateString('en-US',{year:'numeric',month:'long'});
+      if (!localStorage.getItem('joinedDate')) localStorage.setItem('joinedDate', joined);
+
+      const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+
+      // Sidebar
+      document.getElementById('sidebarAvatar').textContent = name.charAt(0).toUpperCase();
+      document.getElementById('sidebarName').textContent   = name;
+      document.getElementById('sidebarEmail').textContent  = email;
+
+      // View
+      document.getElementById('infoName').textContent    = name;
+      document.getElementById('infoPhone').textContent   = phone;
+      document.getElementById('infoDob').textContent     = dob;
+      document.getElementById('infoGender').textContent  = gender;
+      document.getElementById('infoJoined').textContent  = joined;
+      document.getElementById('infoOrders').textContent  = orders.length + ' order' + (orders.length !== 1 ? 's' : '');
+
+      // Pre-fill edit form
+      document.getElementById('editName').value    = name;
+      document.getElementById('editPhone').value   = localStorage.getItem('userPhone') || '';
+      document.getElementById('editDob').value     = localStorage.getItem('userDob')   || '';
+      document.getElementById('editGender').value  = localStorage.getItem('userGender')|| '';
+      document.getElementById('editAvatar').textContent    = name.charAt(0).toUpperCase();
+      document.getElementById('editAvatarName').textContent = name;
+
+      // Pre-fill address from last order if none saved
+      const addresses = JSON.parse(localStorage.getItem('savedAddresses') || '[]');
+      if (!addresses.length) {
+        const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+        if (orders.length) {
+          const parts = orders[0].address.split(', ');
+          if (parts.length >= 2) {
+            addresses.push({ label:'Home', name:parts[0], street:parts[1]||'', city:parts[2]?parts[2].split(' ')[0]:'', zip:parts[2]?parts[2].split(' ')[1]||'':'', country:parts[3]||'', phone:'' });
+            localStorage.setItem('savedAddresses', JSON.stringify(addresses));
+          }
+        }
+      }
+    }
+
+    function toggleEditForm() {
+      const form = document.getElementById('editForm');
+      const view = document.getElementById('profileView');
+      const btn  = document.getElementById('editToggleBtn');
+      const isHidden = form.classList.contains('hidden');
+      form.classList.toggle('hidden', !isHidden);
+      view.classList.toggle('hidden', isHidden);
+      btn.innerHTML = isHidden
+        ? '<i class="fas fa-times"></i> Cancel'
+        : '<i class="fas fa-edit"></i> Edit Profile';
+      if (isHidden) form.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function saveProfile() {
+      const name    = document.getElementById('editName').value.trim();
+      const phone   = document.getElementById('editPhone').value.trim();
+      const dob     = document.getElementById('editDob').value;
+      const gender  = document.getElementById('editGender').value;
+      const newPwd  = document.getElementById('editNewPwd').value;
+      const confPwd = document.getElementById('editConfirmPwd').value;
+      const msg     = document.getElementById('editMsg');
+
+      if (!name) { msg.textContent = 'Name cannot be empty.'; msg.style.color = '#e94560'; return; }
+      if (newPwd && newPwd !== confPwd) { msg.textContent = 'Passwords do not match.'; msg.style.color = '#e94560'; return; }
+
+      localStorage.setItem('userName',   name);
+      localStorage.setItem('userPhone',  phone);
+      localStorage.setItem('userDob',    dob);
+      localStorage.setItem('userGender', gender);
+
+      if (newPwd) {
+        // Update password in offlineUsers
+        const email = localStorage.getItem('userEmail') || '';
+        const users = JSON.parse(localStorage.getItem('offlineUsers') || '[]');
+        const u = users.find(u => u.email === email);
+        if (u) { u.password = newPwd; localStorage.setItem('offlineUsers', JSON.stringify(users)); }
+      }
+
+      msg.textContent = '';
+      loadProfile();
+      toggleEditForm();
+      showToast('Profile updated successfully!');
+    }
+
+    function togglePwd(id, btn) {
+      const input = document.getElementById(id);
+      const isText = input.type === 'text';
+      input.type = isText ? 'password' : 'text';
+      btn.innerHTML = isText ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+    }
+
+    // ── ADDRESSES ──────────────────────────────────────────
+    function renderAddresses() {
+      const addresses = JSON.parse(localStorage.getItem('savedAddresses') || '[]');
+      const list = document.getElementById('addressList');
+      if (!addresses.length) { list.innerHTML = '<p class="no-addr">No saved addresses yet. Add one below.</p>'; return; }
+      list.innerHTML = addresses.map((a, i) => `
+        <div class="address-card">
+          <div class="address-badge">${a.label || 'Address'}</div>
+          <div class="address-body">
+            <strong>${a.name}</strong>
+            <p>${a.street}</p>
+            <p>${a.city}${a.zip ? ' ' + a.zip : ''}${a.country ? ', ' + a.country : ''}</p>
+            ${a.phone ? '<p><i class="fas fa-phone"></i> ' + a.phone + '</p>' : ''}
+          </div>
+          <div class="address-actions">
+            <button class="btn-icon" onclick="editAddress(${i})" title="Edit"><i class="fas fa-edit"></i></button>
+            <button class="btn-icon btn-icon-del" onclick="deleteAddress(${i})" title="Delete"><i class="fas fa-trash"></i></button>
+          </div>
+        </div>`).join('');
+    }
+
+    function showAddressForm() {
+      editingIndex = -1;
+      document.getElementById('addressFormTitle').textContent = 'Add New Address';
+      ['addrLabel','addrName','addrStreet','addrCity','addrZip','addrCountry','addrPhone'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('addrMsg').textContent = '';
+      document.getElementById('addressForm').classList.remove('hidden');
+      document.getElementById('addressForm').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function hideAddressForm() {
+      document.getElementById('addressForm').classList.add('hidden');
+      editingIndex = -1;
+    }
+
+    function editAddress(i) {
+      const a = JSON.parse(localStorage.getItem('savedAddresses') || '[]')[i];
+      editingIndex = i;
+      document.getElementById('addressFormTitle').textContent = 'Edit Address';
+      document.getElementById('addrLabel').value   = a.label   || '';
+      document.getElementById('addrName').value    = a.name    || '';
+      document.getElementById('addrStreet').value  = a.street  || '';
+      document.getElementById('addrCity').value    = a.city    || '';
+      document.getElementById('addrZip').value     = a.zip     || '';
+      document.getElementById('addrCountry').value = a.country || '';
+      document.getElementById('addrPhone').value   = a.phone   || '';
+      document.getElementById('addrMsg').textContent = '';
+      document.getElementById('addressForm').classList.remove('hidden');
+      document.getElementById('addressForm').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function saveAddress() {
+      const label   = document.getElementById('addrLabel').value.trim();
+      const name    = document.getElementById('addrName').value.trim();
+      const street  = document.getElementById('addrStreet').value.trim();
+      const city    = document.getElementById('addrCity').value.trim();
+      const zip     = document.getElementById('addrZip').value.trim();
+      const country = document.getElementById('addrCountry').value.trim();
+      const phone   = document.getElementById('addrPhone').value.trim();
+      const msg     = document.getElementById('addrMsg');
+
+      if (!name || !street || !city || !country) { msg.textContent = 'Please fill Name, Street, City and Country.'; msg.style.color = '#e94560'; return; }
+
+      const addresses = JSON.parse(localStorage.getItem('savedAddresses') || '[]');
+      const entry = { label: label || 'Address', name, street, city, zip, country, phone };
+      if (editingIndex >= 0) addresses[editingIndex] = entry;
+      else addresses.push(entry);
+      localStorage.setItem('savedAddresses', JSON.stringify(addresses));
+      hideAddressForm();
+      renderAddresses();
+      showToast(editingIndex >= 0 ? 'Address updated!' : 'Address saved!');
+    }
+
+    function deleteAddress(i) {
+      const addresses = JSON.parse(localStorage.getItem('savedAddresses') || '[]');
+      addresses.splice(i, 1);
+      localStorage.setItem('savedAddresses', JSON.stringify(addresses));
+      renderAddresses();
+      showToast('Address removed.');
+    }
+
+    function logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('userName');
+      localStorage.removeItem('userEmail');
+      window.location.href = 'index.html';
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+  </script>
+</body>
+</html>

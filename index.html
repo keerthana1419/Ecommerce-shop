@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ShopZone - E-Commerce</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="logo">🛒 ShopZone</div>
+    <div class="nav-links">
+      <a href="#products" style="text-decoration: none; color: #fff; font-weight: bold;">
+  Products
+</a>
+
+      <!-- USER DROPDOWN -->
+      <div class="user-dropdown" id="userDropdown">
+        <button class="user-btn" id="userBtn" onclick="toggleDropdown()">
+          <i class="fas fa-user-circle"></i>
+          <span id="userBtnLabel">Account</span>
+          <i class="fas fa-chevron-down" id="dropChevron"></i>
+        </button>
+        <div class="dropdown-menu" id="dropdownMenu">
+          <!-- filled by JS -->
+        </div>
+      </div>
+
+      <button class="wish-nav-btn" onclick="handleWishlistOpen()" title="Wishlist">
+        <i class="fas fa-heart"></i>
+        <span class="cart-count" id="wishCount">0</span>
+      </button>
+      <button class="cart-btn" onclick="handleCartOpen()">
+        <i class="fas fa-shopping-cart"></i>
+        <span class="cart-count" id="cartCount">0</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <h1>Welcome to ShopZone</h1>
+    <p>Discover amazing products at unbeatable prices</p>
+    <a href="#products" class="btn-primary">Shop Now</a>
+  </section>
+
+  <!-- SEARCH & FILTER -->
+  <section class="controls" id="products">
+    <input type="text" id="searchInput" placeholder="Search products..." oninput="filterProducts()"/>
+  </section>
+  <div class="category-pills">
+    <button class="pill active" onclick="setPill(this, '')">All</button>
+    <button class="pill" onclick="setPill(this, 'Electronics')">Electronics</button>
+    <button class="pill" onclick="setPill(this, 'Clothing')">Clothing</button>
+    <button class="pill" onclick="setPill(this, 'Books')">Books</button>
+    <button class="pill" onclick="setPill(this, 'Home')">Home</button>
+  </div>
+
+  <!-- PRODUCTS GRID -->
+  <section class="products-grid" id="productsGrid"></section>
+
+  <!-- CART SIDEBAR -->
+  <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+  <div class="cart-sidebar" id="cartSidebar">
+    <div class="cart-header">
+      <h2>Your Cart</h2>
+      <button onclick="toggleCart()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-footer">
+      <div class="cart-summary">
+        <div class="cart-summary-row"><span>Subtotal</span><span id="cartSubtotal">$0.00</span></div>
+        <div class="cart-summary-row"><span>Shipping</span><span>FREE</span></div>
+        <div class="cart-summary-row total"><span>Total</span><span id="cartTotal">$0.00</span></div>
+      </div>
+      <button class="btn-primary" onclick="goCheckout()"><i class="fas fa-lock"></i> Secure Checkout</button>
+    </div>
+  </div>
+
+  <!-- LOGIN MODAL -->
+  <div class="modal" id="loginModal">
+    <div class="modal-box">
+      <button class="close-btn" onclick="closeModal('loginModal')"><i class="fas fa-times"></i></button>
+      <div class="modal-logo">🛒 ShopZone</div>
+      <h2>Welcome Back</h2>
+      <p class="modal-sub">Login to your account</p>
+      <input type="email" id="loginEmail" placeholder="Email address"/>
+      <input type="password" id="loginPassword" placeholder="Password"/>
+      <button class="btn-primary" onclick="login()">Login</button>
+      <p id="loginMsg" class="msg"></p>
+      <p class="modal-switch">Don't have an account? <a onclick="closeModal('loginModal'); openModal('registerModal')">Register</a></p>
+    </div>
+  </div>
+
+  <!-- REGISTER MODAL -->
+  <div class="modal" id="registerModal">
+    <div class="modal-box">
+      <button class="close-btn" onclick="closeModal('registerModal')"><i class="fas fa-times"></i></button>
+      <div class="modal-logo">🛒 ShopZone</div>
+      <h2>Create Account</h2>
+      <p class="modal-sub">Join ShopZone today</p>
+      <input type="text" id="regName" placeholder="Full Name"/>
+      <input type="email" id="regEmail" placeholder="Email address"/>
+      <input type="password" id="regPassword" placeholder="Password (min 6 characters)"/>
+      <button class="btn-primary" onclick="register()">Create Account</button>
+      <p id="registerMsg" class="msg"></p>
+      <p class="modal-switch">Already have an account? <a onclick="closeModal('registerModal'); openModal('loginModal')">Login</a></p>
+    </div>
+  </div>
+
+  <!-- PRODUCT DETAIL MODAL -->
+  <div class="modal" id="productModal">
+    <div class="modal-box product-modal-box">
+      <button class="close-btn" onclick="closeModal('productModal')"><i class="fas fa-times"></i></button>
+      <div class="product-modal-content">
+        <img id="pdImage" src="" alt=""/>
+        <div class="product-modal-info">
+          <span id="pdCategory" class="category"></span>
+          <h2 id="pdName"></h2>
+          <p id="pdPrice" class="price"></p>
+          <p id="pdDesc" class="pd-desc"></p>
+          <div class="pd-actions">
+            <button class="btn-primary" id="pdCartBtn"><i class="fas fa-cart-plus"></i> Add to Cart</button>
+            <button class="btn-wish" id="pdWishBtn" onclick="toggleWishFromDetail()"><i class="fas fa-heart"></i> Wishlist</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WISHLIST MODAL -->
+  <div class="modal" id="wishlistModal">
+    <div class="modal-box">
+      <button class="close-btn" onclick="closeModal('wishlistModal')"><i class="fas fa-times"></i></button>
+      <h2><i class="fas fa-heart" style="color:#e94560"></i> Wishlist</h2>
+      <div id="wishlistItems"></div>
+    </div>
+  </div>
+
+  <!-- AUTH GATE MODAL -->
+  <div class="modal" id="authGateModal">
+    <div class="modal-box auth-gate-box">
+      <button class="close-btn" onclick="closeModal('authGateModal')"><i class="fas fa-times"></i></button>
+      <div class="auth-gate-icon"><i class="fas fa-lock"></i></div>
+      <h2>Sign in Required</h2>
+      <p class="auth-gate-msg" id="authGateMsg">Please login or create an account to continue.</p>
+      <button class="btn-primary" onclick="switchToLogin()"><i class="fas fa-sign-in-alt"></i> Login</button>
+      <button class="btn-outline" onclick="switchToRegister()"><i class="fas fa-user-plus"></i> Create Account</button>
+    </div>
+  </div>
+
+  <!-- ORDER SUCCESS TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+
+    <!-- Newsletter -->
+    <div class="footer-newsletter">
+      <div class="footer-newsletter-text">
+        <h3><i class="fas fa-envelope-open-text"></i> Subscribe to our Newsletter</h3>
+        <p>Get the latest deals, new arrivals and exclusive offers straight to your inbox.</p>
+      </div>
+      <div class="footer-newsletter-form">
+        <input type="email" placeholder="Enter your email address..."/>
+        <button><i class="fas fa-paper-plane"></i> Subscribe</button>
+      </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="footer-main">
+
+      <!-- Brand -->
+      <div class="footer-col">
+        <h3>🛒 ShopZone</h3>
+        <p class="footer-tagline">Your one-stop destination for amazing products at unbeatable prices. Shop smart, live better.</p>
+        <div class="social-links">
+          <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
+          <a href="#" title="YouTube"><i class="fab fa-youtube"></i></a>
+          <a href="#" title="Pinterest"><i class="fab fa-pinterest-p"></i></a>
+        </div>
+      </div>
+
+      <!-- Shop -->
+      <div class="footer-col">
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="#"><i class="fas fa-chevron-right"></i> Electronics</a></li>
+          <li><a href="#"><i class="fas fa-chevron-right"></i> Clothing</a></li>
+          <li><a href="#"><i class="fas fa-chevron-right"></i> Books</a></li>
+          <li><a href="#"><i class="fas fa-chevron-right"></i> Home &amp; Living</a></li>
+          <li><a href="#"><i class="fas fa-chevron-right"></i> New Arrivals</a></li>
+          <li><a href="#"><i class="fas fa-chevron-right"></i> Best Sellers</a></li>
+        </ul>
+      </div>
+
+      <!-- Help -->
+      <div class="footer-col">
+        <h4>Help</h4>
+        <ul>
+          <li><a href="#"><i class="fas fa-chevron-right"></i> FAQ</a></li>
+          <li><a href="#"><i class="fas fa-chevron-right"></i> Shipping Policy</a></li>
+          <li><a href="#"><i class="fas fa-chevron-right"></i> Returns &amp; Refunds</a></li>
+          <li><a href="orders.html"><i class="fas fa-chevron-right"></i> Track My Order</a></li>
+          <li><a href="#"><i class="fas fa-chevron-right"></i> Privacy Policy</a></li>
+          <li><a href="#"><i class="fas fa-chevron-right"></i> Terms of Service</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact -->
+      <div class="footer-col">
+        <h4>Contact Us</h4>
+        <div class="footer-contact-item">
+          <div class="footer-contact-icon"><i class="fas fa-envelope"></i></div>
+          <div class="footer-contact-info">
+            <span>Email</span>
+            <p>support@shopzone.com</p>
+          </div>
+        </div>
+        <div class="footer-contact-item">
+          <div class="footer-contact-icon"><i class="fas fa-phone"></i></div>
+          <div class="footer-contact-info">
+            <span>Phone</span>
+            <p>+1 800 123 4567</p>
+          </div>
+        </div>
+        <div class="footer-contact-item">
+          <div class="footer-contact-icon"><i class="fas fa-clock"></i></div>
+          <div class="footer-contact-info">
+            <span>Support Hours</span>
+            <p>Mon – Sat, 9am – 6pm</p>
+          </div>
+        </div>
+        <div class="footer-contact-item">
+          <div class="footer-contact-icon"><i class="fas fa-map-marker-alt"></i></div>
+          <div class="footer-contact-info">
+            <span>Address</span>
+            <p>123 Market St, New York, USA</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="footer-bottom">
+      <div class="footer-bottom-left">
+        &copy; 2025 ShopZone. All rights reserved.
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms</a>
+        <a href="#">Sitemap</a>
+      </div>
+      <div class="footer-payment">
+        <span>We accept:</span>
+        <span class="pay-icon">VISA</span>
+        <span class="pay-icon">Mastercard</span>
+        <span class="pay-icon">PayPal</span>
+        <span class="pay-icon">UPI</span>
+        <span class="pay-icon">COD</span>
+      </div>
+    </div>
+
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
