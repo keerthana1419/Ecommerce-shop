@@ -5,29 +5,26 @@ pipeline {
 
         stage('Clone Repository') {
             steps {
-                echo 'Cloning the repository...'
+                echo 'Cloning...'
                 checkout scm
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                echo 'Installing dependencies...'
-                sh 'npm install'
+                sh '/usr/bin/npm install'
             }
         }
 
         stage('Stop Old App') {
             steps {
-                echo 'Stopping old app...'
                 sh 'pkill -f "node server.js" || true'
             }
         }
 
         stage('Deploy') {
             steps {
-                echo 'Starting the app...'
-                sh 'nohup node server.js > /tmp/app.log 2>&1 &'
+                sh 'nohup /usr/bin/node server.js > /tmp/app.log 2>&1 &'
             }
         }
     }
